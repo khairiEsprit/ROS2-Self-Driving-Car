@@ -13,7 +13,7 @@ docker run -it \
     --net=host \
     --privileged \
     --runtime=nvidia \
-    noshluk2/ros2-self-driving-car-ai-using-opencv \
+    khairiesprit/ros2-self-driving-car:latest \
     bash
 
 echo "Done."

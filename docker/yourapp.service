@@ -1,13 +1,17 @@
 [Unit]
-Description=Your Application
+Description=ROS2 Self Driving Car Application
 After=docker.service
 Requires=docker.service
 
 [Service]
+Type=forking
 Restart=always
+RestartSec=10
 ExecStartPre=-/usr/bin/docker kill yourapp
 ExecStartPre=-/usr/bin/docker rm yourapp
-ExecStart=/usr/bin/docker run --name yourapp -p 80:80 khairiesprit/ros2-self-driving-car:latest
+ExecStart=/usr/bin/docker run -d --name yourapp --restart=unless-stopped -p 80:80 khairiesprit/ros2-self-driving-car:latest
+ExecStop=/usr/bin/docker stop yourapp
+ExecStopPost=/usr/bin/docker rm yourapp
 
 [Install]
 WantedBy=multi-user.target
