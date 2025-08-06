@@ -24,7 +24,19 @@ A tesla Like Car in ROS2 will follow lane , Use AI to classify Sign Boards and p
 ----
 ## Using this Repository
 ----
-**Docker**:
+**Docker (Recommended)**:
+
+🐳 **Quick Start with Docker:**
+```bash
+# Pull and run the latest image
+docker pull khairiesprit/ros2-self-driving-car:latest
+docker run -it --name ros2-sdc -p 80:80 khairiesprit/ros2-self-driving-car:latest
+```
+
+🚀 **Auto-Update Setup for EC2:**
+- [Simple Auto-Update Guide](docker/SETUP.md) - Set up automatic deployment on your EC2 instance
+
+**Manual Setup:**
 
  [![alt text](https://github.com/HaiderAbasi/ROS2-Path-Planning-and-Maze-Solving/blob/master/images/linux.png)](https://github.com/noshluk2/ROS2-Self-Driving-Car-AI-using-OpenCV/blob/main/docker/running_on_linux.md "Follow the guide to setup docker on Linux")&nbsp;&nbsp;
  [![alt text](https://github.com/HaiderAbasi/ROS2-Path-Planning-and-Maze-Solving/blob/master/images/windows.png)](https://github.com/noshluk2/ROS2-Self-Driving-Car-AI-using-OpenCV/blob/main/docker/running_on_windows.md "Follow the guide to setup docker on Windows 10")&nbsp;&nbsp;

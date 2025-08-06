@@ -1,5 +1,5 @@
 # Use official ROS2 Humble base image (Ubuntu 22.04)
-FROM ros:humble-desktop-full
+FROM osrf/ros:humble-desktop-full
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
