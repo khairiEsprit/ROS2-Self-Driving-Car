@@ -1,0 +1,13 @@
+[Unit]
+Description=Your Application
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStartPre=-/usr/bin/docker kill yourapp
+ExecStartPre=-/usr/bin/docker rm yourapp
+ExecStart=/usr/bin/docker run --name yourapp -p 80:80 khairiesprit/ros2-self-driving-car:latest
+
+[Install]
+WantedBy=multi-user.target
