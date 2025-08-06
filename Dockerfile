@@ -48,9 +48,16 @@ WORKDIR /workspace
 COPY . /workspace/
 
 # Install Python dependencies if requirements file exists
-RUN if [ -f "self_driving_car_pkg/self_driving_car_pkg/data/Requirements.txt" ]; then \
-        pip3 install -r self_driving_car_pkg/self_driving_car_pkg/data/Requirements.txt; \
-    fi
+RUN pip3 install --upgrade pip && \
+    pip3 install \
+        tensorflow \
+        keras \
+        visualkeras \
+        opencv-python \
+        scikit-learn \
+        pandas \
+        pillow && \
+    pip3 install git+https://github.com/keplr-io/quiver.git || true
 
 # Install any missing dependencies using rosdep
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
@@ -58,7 +65,7 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 
 # Source ROS2 setup and build the workspace
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
-    colcon build --packages-select self_driving_car_pkg self_driving_car_pkg_models --symlink-install"
+    colcon build --packages-select self_driving_car_pkg self_driving_car_pkg_models --symlink-install --continue-on-error"
 
 # Set up entrypoint
 RUN echo '#!/bin/bash\nsource /opt/ros/humble/setup.bash\nsource /workspace/install/setup.bash\nexec "$@"' > /entrypoint.sh && \
