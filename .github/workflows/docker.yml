@@ -28,4 +28,4 @@ jobs:
         context: .
         file: ./docker/Dockerfile
         push: true
-        tags: khairiesprit/ros2-self-driving-car:latest
+        tags: khairiiii/ros2-self-driving-car:latest

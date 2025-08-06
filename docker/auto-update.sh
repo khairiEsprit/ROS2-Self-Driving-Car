@@ -3,7 +3,7 @@
 # Simple auto-update script for ROS2 Self Driving Car
 # Pulls latest image and restarts container
 
-IMAGE_NAME="khairiesprit/ros2-self-driving-car:latest"
+IMAGE_NAME="khairiiii/ros2-self-driving-car:latest"
 CONTAINER_NAME="yourapp"
 
 echo "$(date): Starting update..."

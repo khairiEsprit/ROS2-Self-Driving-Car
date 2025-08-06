@@ -1,6 +1,10 @@
 # Use official ROS2 Humble base image (Ubuntu 22.04)
 FROM osrf/ros:humble-desktop-full
 
+# Maintainer info
+LABEL maintainer="khairiEsprit"
+LABEL description="ROS2 Self Driving Car with AI and Computer Vision"
+
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV ROS_DISTRO=humble
