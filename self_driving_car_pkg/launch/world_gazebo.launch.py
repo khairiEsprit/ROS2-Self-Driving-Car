@@ -40,9 +40,9 @@ def generate_launch_description():
         )
     )
 
-    red_light_sdf = os.path.join(pkg_share_dir,'models','light_red/model.sdf')
-    yellow_light_sdf = os.path.join(pkg_share_dir,'models','light_yellow/model.sdf')
-    green_light_sdf = os.path.join(pkg_share_dir,'models','light_green/model.sdf')
+    red_light_sdf = os.path.join(model_pkg_share_dir,'models','light_red/model.sdf')
+    yellow_light_sdf = os.path.join(model_pkg_share_dir,'models','light_yellow/model.sdf')
+    green_light_sdf = os.path.join(model_pkg_share_dir,'models','light_green/model.sdf')
 
     spawn_red_light = ExecuteProcess(
         cmd=['ros2', 'run', 'self_driving_car_pkg', 'spawner_node', red_light_sdf,'red_light'],
