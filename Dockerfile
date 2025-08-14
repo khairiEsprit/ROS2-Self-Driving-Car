@@ -14,11 +14,7 @@ ENV LC_ALL=C.UTF-8
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     python3-pip \
-    python3-opencv \
-    python3-numpy \
-    python3-scipy \
-    python3-matplotlib \
-    python3-sklearn \
+    python3-dev \
     python3-rosdep \
     python3-colcon-common-extensions \
     python3-setuptools \
@@ -42,27 +38,82 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Initialize rosdep
-RUN rosdep init && rosdep update
+# Initialize rosdep (skip if already exists)
+RUN rosdep init || echo "rosdep already initialized" && rosdep update
 
 # Set working directory
 WORKDIR /workspace
 
+# Copy requirements file first for better Docker layer caching
+COPY requirements.txt /workspace/
+
+# Install Python dependencies with specific versions for NumPy compatibility
+RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel && \
+    pip3 install --no-cache-dir --upgrade "packaging>=21.0" && \
+    # Remove any system-installed conflicting packages
+    pip3 uninstall -y numpy scipy matplotlib opencv-python scikit-learn || true && \
+    pip3 install --no-cache-dir -r /workspace/requirements.txt
+
 # Copy the entire project
 COPY . /workspace/
 
-# Install Python dependencies if requirements file exists
+# Install any missing dependencies using rosdep (with timeout)
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
+    timeout 300 rosdep install --from-paths . --ignore-src -r -y || echo 'rosdep install completed or timed out'"srf/ros:humble-desktop-full
+
+# Maintainer info
+LABEL maintainer="khairiEsprit"
+LABEL description="ROS2 Self Driving Car with AI and Computer Vision"
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DISTRO=humble
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    python3-rosdep \
+    python3-colcon-common-extensions \
+    python3-setuptools \
+    python3-vcstool \
+    curl \
+    git \
+    wget \
+    vim \
+    nano \
+    htop \
+    gazebo \
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-cv-bridge \
+    ros-humble-image-transport \
+    ros-humble-camera-calibration-parsers \
+    ros-humble-camera-info-manager \
+    ros-humble-launch-testing-ament-cmake \
+    ros-humble-robot-state-publisher \
+    ros-humble-joint-state-publisher \
+    ros-humble-xacro \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Initialize rosdep (skip if already initialized)
+RUN (rosdep init || echo "rosdep already initialized") && rosdep update
+
+# Copy requirements file first for better Docker layer caching
+COPY requirements.txt /workspace/
+
+# Install Python dependencies with specific versions for NumPy compatibility
 RUN pip3 install --upgrade pip setuptools wheel && \
     pip3 install --upgrade "packaging>=21.0" && \
-    pip3 install \
-        tensorflow \
-        keras \
-        visualkeras \
-        opencv-python \
-        scikit-learn \
-        pandas \
-        pillow && \
+    # Remove any system-installed conflicting packages
+    pip3 uninstall -y numpy scipy matplotlib opencv-python scikit-learn || true && \
+    pip3 install -r /workspace/requirements.txt && \
     pip3 install git+https://github.com/keplr-io/quiver.git || true
+
+# Copy the entire project
+COPY . /workspace/
 
 # Install any missing dependencies using rosdep
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
