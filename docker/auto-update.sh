@@ -26,7 +26,13 @@ cd ~/ROS2-Self-Driving-Car
 echo "$(date): Resetting local changes and pulling latest code..."
 git reset --hard HEAD
 git clean -fd
-git pull origin main
+
+# Configure git pull strategy to avoid divergent branches error
+git config pull.rebase false
+
+# Force pull latest changes
+git fetch origin main
+git reset --hard origin/main
 
 # Stop and remove old containers first to free space
 echo "$(date): Stopping old containers..."
@@ -53,12 +59,23 @@ if ! docker pull $IMAGE_NAME; then
     fi
 fi
 
-# Start new container with volume mounting
+# Enable X11 forwarding for VNC/GUI applications
+echo "$(date): Setting up X11 forwarding..."
+export DISPLAY=:1
+xhost +local:docker 2>/dev/null || echo "Warning: Could not set xhost permissions"
+
+# Start new container with volume mounting and proper environment
 echo "$(date): Starting new container..."
 CONTAINER_ID=$(docker run -it -d --name $CONTAINER_NAME \
   -v $(pwd):/workspace \
-  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  -e DISPLAY=:1 \
+  -e LIBGL_ALWAYS_SOFTWARE=1 \
+  -e ALSA_CARD=-1 \
+  -e PULSE_RUNTIME_PATH="" \
+  -e QT_X11_NO_MITSHM=1 \
   --net=host \
+  --privileged \
   $IMAGE_NAME bash)
 
 if [ $? -eq 0 ]; then
